@@ -29,11 +29,13 @@ export default class AutoSuggest extends Component {
     placeholder: PropTypes.string,
     terms: PropTypes.array,
     clearBtnVisibility: PropTypes.bool,
+    maxRow : PropTypes.number,
   }
 
   static defaultProps = {
     onChangeTextDebounce: 0,
-    clearBtnVisibility: false
+    clearBtnVisibility: false,
+    maxRow : 5,
   }
   getInitialStyles() {
     return {
@@ -49,7 +51,7 @@ export default class AutoSuggest extends Component {
 
       },
       clearBtnStyles: {
-     
+
 
       },
       containerStyles: {
@@ -75,23 +77,24 @@ export default class AutoSuggest extends Component {
     this.onItemPress = this.onItemPress.bind(this);
     this.listHeight = 40;
     this.state = {
-      results: this.props.terms,
+      results: [],
       currentInput: null,
       isRemoving: null,
-      listHeight: new Animated.Value(this.listHeight)
+      listHeight: new Animated.Value(this.listHeight),
+      listViewHeight: 0,
     };
 
   }
   componentDidMount() {
     // when user hits the return button, clear the terms
-    Keyboard.addListener('keyboardDidHide', () => this.clearTerms())
+    // Keyboard.addListener('keyboardDidHide', () => this.clearTerms())
   }
 
   setCurrentInput(currentInput) {
     this.setState({ currentInput })
   }
 
-  clearInputAndTerms() {
+  clearInputAndTerms = () => {
     this.refs.TI.clear();
     this.clearTerms();
   }
@@ -104,9 +107,26 @@ export default class AutoSuggest extends Component {
       const results = this.props.terms.filter((eachTerm => {
         if (findMatch(eachTerm, currentInput)) return eachTerm
       }))
-      this.setState({ isRemoving: results.length < this.state.results.length })
+      if(results.length > this.props.maxRow){
+        this.setState({
+          listViewHeight: this.listHeight * this.props.maxRow
+        })
+      }else{
+        this.setState({
+          listViewHeight: this.listHeight * results.length
+        })
+      }
+
+      // this.setState({ isRemoving: results.length < this.state.results.length })
       const inputIsEmpty = !!(currentInput.length <= 0)
-      this.setState({ results: inputIsEmpty ? [] : results }) // if input is empty don't show any results
+      if(inputIsEmpty){
+        this.setState({
+          listViewHeight: 0
+        })
+      }
+      this.setState({
+        results: inputIsEmpty ? [] : results,
+      }) // if input is empty don't show any results
     })()
   }
   onRemoving() {
@@ -133,34 +153,31 @@ export default class AutoSuggest extends Component {
               ref="TI"
               spellCheck={false}
               defaultValue={this.state.currentInput}
-              onChangeText={(el) => { 
-                this.searchTerms(el); 
-                if (typeof this.props.onChangeText === 'function') debounce(this.props.onChangeTextDebounce, () => this.props.onChangeText(el));
+              onChangeText={(el) => {
+                this.searchTerms(el);
+                // if (typeof this.props.onChangeText === 'function') debounce(this.props.onChangeTextDebounce, () => this.props.onChangeText(el));
               }}
               placeholder={this.props.placeholder}
               style={this.getCombinedStyles('textInputStyles')}
               />
-              
+
             {  this.props.clearBtn ? // for if the user just wants the default clearBtn
               <TouchableOpacity onPress={() => this.clearInputAndTerms()}>
                 { this.props.clearBtn }
               </TouchableOpacity>
             : false }
 
-            {  !this.props.clearBtn && this.props.clearBtnVisibility ? // for if the user passes a custom btn comp. 
-              <Button style={this.getCombinedStyles('clearBtnStyles')} title="Clear" onPress={() => this.clearInputAndTerms()} /> 
-              : false 
+            {  !this.props.clearBtn && this.props.clearBtnVisibility ? // for if the user passes a custom btn comp.
+              <Button style={this.getCombinedStyles('clearBtnStyles')} title="Clear" onPress={() => this.clearInputAndTerms()} />
+              : false
             }
-           
               </View>
-          <Animated.View>
+          <Animated.View style={{height: this.state.listViewHeight}}>
             <ListView
-              keyboardShouldPersistTaps={rnVersion >="0.4.0" ? "always" : true}
-              initialListSize={15}
-              enableEmptySections
+              enableEmptySections={true}
               dataSource={ds.cloneWithRows(this.state.results)}
-              renderRow={(rowData, sectionId, rowId, highlightRow) =>  
-                      <RowWrapper 
+              renderRow={(rowData, sectionId, rowId, highlightRow) =>
+                      <RowWrapper
                       styles={this.getCombinedStyles('rowWrapperStyles')}
                       isRemoving={this.state.isRemoving}
                       >
