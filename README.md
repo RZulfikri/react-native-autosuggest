@@ -35,7 +35,8 @@ Refer to the source code for more information about the rest.
 * `terms` (__Array__  e.g. ['Chicago', 'New York', 'San Francisco'])
 * `placeholder` (__String__ e.g. "Please enter a City.")
 * `maxRow` (__Number__ e.g. 10, Default number is 5)
-### Styles
+
+### Styles:
 * `clearBtnStyles` (__Object__ e.g. {backgroundColor: "white", flex: 2})
 * `textInputStyles` (__Object__ e.g. {width: 400, backgroundColor: "black"})
 * `containerStyles` (__Object__ e.g. {flex: 2})
