@@ -4,7 +4,7 @@
 ![alt tag](https://media.giphy.com/media/26xBrNDd3FQ07U27m/source.gif)
 
 ## Installation
-* `npm install autosuggest --save`
+* `npm install {link of this git download} --save`
 
 ___
 
