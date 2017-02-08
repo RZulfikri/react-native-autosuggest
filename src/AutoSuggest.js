@@ -154,19 +154,15 @@ export default class AutoSuggest extends Component {
               spellCheck={false}
               defaultValue={this.state.currentInput}
               onChangeText={(el) => {
-                console.log('ini el bos : '+el)
                 this.searchTerms(el);
                 if (typeof this.props.onChangeText === 'function') {
-                  console.log('true')
                   // debounce(this.props.onChangeTextDebounce, () => this.props.onChangeText(el));
-                  console.log('ini length'+this.state.results.length)
                   if(this.state.results.length === 1){
                     if(el.toLowerCase() == this.state.results[0].text.toLowerCase()){
                       this.props.onChangeText(this.state.results[0].value);
                     }else{
                       this.props.onChangeText(null);
                     }
-                    // console.log('ini key : '+ this.state.results[0].value)
                   }else{
                     this.props.onChangeText(null);
                   }
