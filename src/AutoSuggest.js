@@ -105,7 +105,7 @@ export default class AutoSuggest extends Component {
     debounce(300, () => {
       const findMatch = (term1, term2) => term1.toLowerCase().indexOf(term2.toLowerCase()) > -1
       const results = this.props.terms.filter((eachTerm => {
-        if (findMatch(eachTerm, currentInput)) return eachTerm
+        if (findMatch(eachTerm.text, currentInput)) return eachTerm
       }))
       if(results.length > this.props.maxRow){
         this.setState({
@@ -154,8 +154,23 @@ export default class AutoSuggest extends Component {
               spellCheck={false}
               defaultValue={this.state.currentInput}
               onChangeText={(el) => {
+                console.log('ini el bos : '+el)
                 this.searchTerms(el);
-                // if (typeof this.props.onChangeText === 'function') debounce(this.props.onChangeTextDebounce, () => this.props.onChangeText(el));
+                if (typeof this.props.onChangeText === 'function') {
+                  console.log('true')
+                  // debounce(this.props.onChangeTextDebounce, () => this.props.onChangeText(el));
+                  console.log('ini length'+this.state.results.length)
+                  if(this.state.results.length === 1){
+                    if(el.toLowerCase() == this.state.results[0].text.toLowerCase()){
+                      this.props.onChangeText(this.state.results[0].value);
+                    }else{
+                      this.props.onChangeText(null);
+                    }
+                    // console.log('ini key : '+ this.state.results[0].value)
+                  }else{
+                    this.props.onChangeText(null);
+                  }
+                }
               }}
               placeholder={this.props.placeholder}
               style={this.getCombinedStyles('textInputStyles')}
@@ -171,12 +186,13 @@ export default class AutoSuggest extends Component {
               <Button style={this.getCombinedStyles('clearBtnStyles')} title="Clear" onPress={() => this.clearInputAndTerms()} />
               : false
             }
-              </View>
+      </View>
           <Animated.View style={{height: this.state.listViewHeight}}>
             <ListView
               enableEmptySections={true}
               dataSource={ds.cloneWithRows(this.state.results)}
-              renderRow={(rowData, sectionId, rowId, highlightRow) =>
+              renderRow={
+                (rowData, sectionId, rowId, highlightRow) =>
                       <RowWrapper
                       styles={this.getCombinedStyles('rowWrapperStyles')}
                       isRemoving={this.state.isRemoving}
@@ -184,21 +200,20 @@ export default class AutoSuggest extends Component {
                         <TouchableOpacity
                           activeOpacity={0.5 /* when you touch it the text color grimaces */}
                           onPress={() => {
-                            this.onItemPress(this.state.results[rowId])
-                            if (this.props.onItemPress) this.props.onItemPress(this.state.results[rowId]);
+                            this.onItemPress(this.state.results[rowId].text)
+                            this.setState({listViewHeight : 0})
+                            if (this.props.onItemPress) this.props.onItemPress(this.state.results[rowId].value);
+                            }
                           }
-                        }
-                          >
-                            <Text style={this.getCombinedStyles('rowTextStyles')}>{rowData}</Text>
-                          </TouchableOpacity>
+                        >
+                          <Text style={this.getCombinedStyles('rowTextStyles')}>{rowData.text}</Text>
+                        </TouchableOpacity>
                       </RowWrapper>
-          }
-              />
+              }
+          />
         </Animated.View>
     </View>
-
     );
-
   }
 }
 
