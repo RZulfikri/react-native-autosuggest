@@ -159,7 +159,7 @@ export default class AutoSuggest extends Component {
                   // debounce(this.props.onChangeTextDebounce, () => this.props.onChangeText(el));
                   if(this.state.results.length === 1){
                     if(el.toLowerCase() == this.state.results[0].text.toLowerCase()){
-                      this.props.onChangeText(this.state.results[0].value);
+                      this.props.onChangeText(this.state.results[0]);
                     }else{
                       this.props.onChangeText(null);
                     }
@@ -198,7 +198,7 @@ export default class AutoSuggest extends Component {
                           onPress={() => {
                             this.onItemPress(this.state.results[rowId].text)
                             this.setState({listViewHeight : 0})
-                            if (this.props.onItemPress) this.props.onItemPress(this.state.results[rowId].value);
+                            if (this.props.onItemPress) this.props.onItemPress(this.state.results[rowId]);
                             }
                           }
                         >
