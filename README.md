@@ -1,5 +1,5 @@
 # AutoSuggest Text Input
-AutoSuggest Text input using Array of object as list of searchable content. And return key/value of object with term object must have this key {text, value}.
+AutoSuggest Text input using Array of object as list of searchable content. And return selected of object with term object must have this key {text, value}.
 
 ## Installation
 * `npm install {link of this git download} --save`
@@ -20,8 +20,8 @@ const suggestions = [
       terms={suggestions}
       placeholder="select a fruit."
       textInputStyles={{backgroundColor: 'black', color: 'white'}}
-      onChangeText={(el) => console.log('changing text!', el)}
-      onItemPress={(el) => console.log('changing text!', el)}
+      onChangeText={(el) => console.log('changing text!', el.text)}
+      onItemPress={(el) => console.log('changing text!', el.text)}
       clearBtnVisibility={false}
       maxRow = {10}
     />
