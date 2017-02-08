@@ -1,7 +1,5 @@
 # AutoSuggest Text Input
-
-
-![alt tag](https://media.giphy.com/media/26xBrNDd3FQ07U27m/source.gif)
+AutoSuggest Text input using Array of object as list of searchable content. And return key/value of object with term object must have this key {text, value}.
 
 ## Installation
 * `npm install {link of this git download} --save`
@@ -12,15 +10,20 @@ ___
 ```js
 import AutoSuggest from 'react-native-autosuggest';
 
+const suggestions = [
+      {text: 'Banana', value: '1'},
+      {text: 'Apple', value: '2'}
+    ]
+
 <AutoSuggest
       rowTextStyles={{backgroundColor: 'darkblue', color: 'white'}}
-      terms={["Apple", "Banana", "Orange", "Strawberry", "Lemon", "Cantaloupe", "Peach", "Mandarin", "Date", "Kiwi"]}
+      terms={suggestions}
       placeholder="select a fruit."
       textInputStyles={{backgroundColor: 'black', color: 'white'}}
       onChangeText={(el) => console.log('changing text!', el)}
-      onChangeTextDebounce={200}
-      clearBtnVisibility={true}
-      ...
+      onItemPress={(el) => console.log('changing text!', el)}
+      clearBtnVisibility={false}
+      maxRow = {10}
     />
 ```
 
